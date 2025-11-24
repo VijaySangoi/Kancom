@@ -1,0 +1,15 @@
+[Unit]
+Description=laravel worker
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/appliancesparts.org
+ExecStart=/usr/bin/php artisan queue:work --timeout=0 --memory=2048
+User=ubuntu
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
