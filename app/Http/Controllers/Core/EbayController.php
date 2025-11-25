@@ -10,11 +10,6 @@ class EbayController extends Controller
 {
     public function manage_acc(Request $req)
     {
-        $store_list = EbayStore::get();
-        return view('ebay.manage')->with("stores",$store_list);
-    }
-    public function manage_acc_new(Request $req)
-    {
         if($req->isMethod('POST')){
             $record = new EbayStore([
                 'store_name'=>$req['Name'],

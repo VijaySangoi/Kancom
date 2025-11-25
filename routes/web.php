@@ -32,8 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['get','post'],'import',[ProductController::class,'import'])->name('import');
     Route::match(['get','post'],'view',[ProductController::class,'view'])->name('view');
     Route::match(['get','post'],'product_list',[ProductController::class,'product_list'])->name('plist');
-    Route::match(['get','post'],'ebay',[EbayController::class,'manage_acc'])->name('ebay');
-    Route::match(['get','post','delete'],'ebay_new',[EbayController::class,'manage_acc_new'])->name('ebay_new');
+    Route::match(['get','post','delete'],'ebay',[EbayController::class,'manage_acc'])->name('ebay');
     Route::view('page1','page1');
     Route::get('code',[AuthCodeController::class,'code'])->name('code');
     Route::get('scrathpad',[ScrathpadController::class,'scrathpad'])->name('scrathpad');

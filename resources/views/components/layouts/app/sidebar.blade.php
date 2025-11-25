@@ -34,9 +34,6 @@
                 <x-layouts.sidebar-link href="{{ route('ebay') }}" icon='fas-house'>
                     Ebay
                 </x-layouts.sidebar-link>
-                <x-layouts.sidebar-link href="{{ route('ebay_new') }}" icon='fas-house'>
-                    Ebay retouch
-                </x-layouts.sidebar-link>
                 <x-layouts.sidebar-two-level-link-parent title="Users" icon="fas-house" :active="request()->routeIs('two-level*')">
                     <x-layouts.sidebar-two-level-link href="{{ route('user_register') }}" icon='fas-house'>
                         User Register

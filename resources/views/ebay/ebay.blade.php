@@ -24,9 +24,9 @@
                     <li>
                         <a @class([
                             'setValues bg-gray-100 dark:bg-gray-700 block px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-600' => !request()->routeIs(
-                                'ebay_new'),
+                                'ebay'),
                             'setValues bg-white dark:bg-gray-600 block px-4 py-3  text-gray-900 dark:text-gray-100 font-medium' => request()->routeIs(
-                                'ebay_new'),
+                                'ebay'),
                         ]) data-name="{{ __($value->store_name)}}" data-clientId="{{ __($value->ebay_client_id)}}" data-devId ="{{ __($value->ebay_dev_id)}}"
                         data-clientSecret="{{ __($value->ebay_client_secret)}}" data-redirectUri="{{ __($value->ebay_redirect_uri)}}" data-id="{{ __($value->id)}}">
                             {{ __($value->store_name)}}
@@ -37,9 +37,9 @@
                 <li>
                     <a @class([
                             'clearValues bg-gray-100 dark:bg-gray-700 block px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-600' => !request()->routeIs(
-                                'ebay_new'),
+                                'ebay'),
                             'clearValues bg-white dark:bg-gray-600 block px-4 py-3  text-gray-900 dark:text-gray-100 font-medium' => request()->routeIs(
-                                'ebay_new'),
+                                'ebay'),
                         ])>+</a>
                 </li>
                 </ul>
@@ -86,7 +86,7 @@
                             <p class="text-gray-600 dark:text-gray-400 mb-4">
                                 {{ __('Delete your Store and all of its resources') }}
                             </p>
-                            <form action="{{ route('ebay_new') }}" method="POST"
+                            <form action="{{ route('ebay') }}" method="POST"
                                 onsubmit="return confirm('{{ __('Are you sure you want to delete your Store?') }}')">
                                 @csrf
                                 @method('DELETE')
