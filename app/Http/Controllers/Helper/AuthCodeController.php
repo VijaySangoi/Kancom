@@ -44,7 +44,7 @@ class AuthCodeController extends Controller
         ->first();
         if($token->expire < now())
         {
-            $res = ES::refreshToken($token->refresh_token);
+            $res = EH::refreshToken($token->refresh_token);
             DB::table('tokens')
             ->where('id',$token->id)
             ->update([
