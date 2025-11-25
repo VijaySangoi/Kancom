@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Helper;
 use App\Http\Controllers\Helper\ApiHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use App\Models\ProductUpdateStatus as PUS;
 use Illuminate\Http\Request;
 
 class EbayHelper extends Controller
@@ -73,6 +74,7 @@ class EbayHelper extends Controller
         }';
         $res = ApiHelper::api($url, $method, $header, $fields);
         $res = json_decode($res);
+        self::log_status($res);
         return $res;
     }
     public static function pack_product($id)
@@ -110,5 +112,18 @@ class EbayHelper extends Controller
                 }
             }';
         return $pack;
+    }
+    private function log_status($responses)
+    {
+        foreach($responses as $index => $response)
+        {
+            $log = new PUS();
+            $log->status_code = $response->statusCode;
+            $log->sku = $response->sku;
+            $log->locale = $response->locale;
+            $log->warnings = $response->warnings;
+            $log->errors = $response->errors;
+            $log->save();
+        }
     }
 }
