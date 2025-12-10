@@ -181,3 +181,7 @@
 .w-fit {
     width: fit-content;
 }
+
+.w-128 {
+    width: 128px;
+}

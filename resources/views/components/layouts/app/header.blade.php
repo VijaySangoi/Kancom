@@ -16,7 +16,7 @@
         <!-- Right side: Search, notifications, profile -->
         <div class="flex items-center space-x-4">
             <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open" class="flex items-center focus:outline-none">
+                <button id="store" @click="open = !open" class="flex items-center focus:outline-none">
                     @if($user_store)
                     {{$user_store->store_name}}
                     @else
