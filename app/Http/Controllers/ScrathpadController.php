@@ -10,6 +10,8 @@ class ScrathpadController extends Controller
 {
     public function scrathpad(Request $request)
     {
-        return view('scrathpad');
+        if($request->isMethod('post'))
+        {
+        }
     }
 }

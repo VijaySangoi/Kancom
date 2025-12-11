@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['get','post','delete'],'ebay',[EbayController::class,'manage_acc'])->name('ebay');
     Route::view('page1','page1');
     Route::get('code',[AuthCodeController::class,'code'])->name('code');
-    Route::get('scrathpad',[ScrathpadController::class,'scrathpad'])->name('scrathpad');
+    Route::match(['get','post'],'scrathpad',[ScrathpadController::class,'scrathpad'])->name('scrathpad');
     Route::post('set_store',[SupplementaryController::class,'set_store'])->name('set_store');
     Route::get('user_register',[AccessController::class,'user_register'])->name('user_register');
 });
