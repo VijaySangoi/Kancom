@@ -38,15 +38,19 @@ class AuthCodeController extends Controller
         $rec->save();
         return view('dashboard');
     }
-    public static function code_valid()
+    public static function code_valid(string $name)
     {
-        $token = DB::table('tokens')
+        $token = DB::table('ebay_stores')
+        ->select('*','ebay_stores.id as esid','auth_codes.id as aucid','tokens.id as tid')
+        ->leftJoin('auth_codes','auth_codes.ebay_store_id','ebay_stores.id')
+        ->leftJoin('tokens','tokens.code_id','auth_codes.id')
+        ->where('ebay_stores.store_name',$name)
         ->first();
         if($token->expire < now())
         {
             $res = EH::refreshToken($token->refresh_token);
             DB::table('tokens')
-            ->where('id',$token->id)
+            ->where('id',$token->tid)
             ->update([
                 'token' => $res->access_token,
                 'expire' => now()->addSeconds($res->expires_in)
@@ -55,6 +59,5 @@ class AuthCodeController extends Controller
         $token = DB::table('tokens')
         ->first();
         return $token->token;
-        //token always valid
     }
 }
