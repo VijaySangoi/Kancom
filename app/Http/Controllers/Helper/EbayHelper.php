@@ -77,6 +77,29 @@ class EbayHelper extends Controller
         self::log_status($res,'create_inventory');
         return $res;
     }
+    public static function bulk_create_offer($token, array $product_id)
+    {
+        $url = 'https://api.sandbox.ebay.com/sell/inventory/v1/bulk_create_offer';
+        $method = 'POST';
+        $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
+        
+        $fields = '{ "requests": [';
+        foreach($product_id as $index => $pid)
+        {
+            if($index > 0)
+            {
+                $fields .= ',';
+            }
+            $fields .= self::post_offer($pid)."" ;
+        }
+         $fields .= '
+            ]
+        }';
+        $res = ApiHelper::api($url, $method, $header, $fields);
+        $res = json_decode($res);
+        self::log_status($res,'create_offer');
+        return $res;
+    }
     public static function pack_product($id)
     {
         $product = DB::table('products')
@@ -126,5 +149,174 @@ class EbayHelper extends Controller
             $log->errors = json_encode($response->errors);
             $log->save();
         }
+    }
+    public static function post_offer($id)
+    {
+        $product = DB::table('products')
+            ->select('*')
+            ->leftJoin('suppliers', 'suppliers.id', '=', 'products.supplier_id')
+            ->leftJoin('distributors', 'distributors.id', '=', 'products.distributor_id')
+            ->leftJoin('brands', 'brands.id', '=', 'products.brand_id')
+            ->leftJoin('conditions', 'conditions.id', '=', 'products.condition')
+            ->where('products.id', '=', $id)
+            ->first();
+        $offer = `{
+            "sku": "' . $product->sku . '",
+            "secondaryCategoryId": "237",
+            "requests": [
+                {
+                "availableQuantity": "' . $product->quantity . '",
+                "categoryId": "237",
+                "charity": {
+                    "charityId": "none",
+                    "donationPercentage": "0"
+                },
+                "extendedProducerResponsibility": {
+                    "ecoParticipationFee": {
+                    "currency": "INR",
+                    "value": "0"
+                    },
+                    "producerProductId": "string",
+                    "productDocumentationId": "string",
+                    "productPackageId": "string",
+                    "shipmentPackageId": "string"
+                },
+                "format": "FIXED_PRICE",
+                "hideBuyerDetails": "false",
+                "includeCatalogProductDetails": "true",
+                "listingDescription": "' . $product->description . '",
+                "listingDuration": "DAYS_5",
+                "listingPolicies": {
+                    "bestOfferTerms": {
+                    "autoAcceptPrice": {
+                        "currency": "INR",
+                        "value": "' . $product->wholesale_price . '"
+                    },
+                    "autoDeclinePrice": {
+                        "currency": "INR",
+                        "value": "' . $product->wholesale_price - 1 . '"
+                    },
+                    "bestOfferEnabled": "false"
+                    },
+                    "eBayPlusIfEligible": "false",
+                    "fulfillmentPolicyId": "235",
+                    "paymentPolicyId": "201",
+                    "productCompliancePolicyIds": [
+                    "201"
+                    ],
+                    "regionalProductCompliancePolicies": {
+                    "countryPolicies": [
+                        {
+                        "country": "IN",
+                        "policyIds": [
+                            "201"
+                        ]
+                        }
+                    ]
+                    },
+                    "regionalTakeBackPolicies": {
+                    "countryPolicies": [
+                        {
+                        "country": "IN",
+                        "policyIds": [
+                            "201"
+                        ]
+                        }
+                    ]
+                    },
+                    "returnPolicyId": "201",
+                    "shippingCostOverrides": [
+                    {
+                        "additionalShippingCost": {
+                        "currency": "INR",
+                        "value": "' . $product->extra_charges . '"
+                        },
+                        "priority": "2",
+                        "shippingCost": {
+                        "currency": "INR",
+                        "value": "' . $product->extra_charges . '"
+                        },
+                        "shippingServiceType": "DOMESTIC",
+                        "surcharge": {
+                        "currency": "INR",
+                        "value": "' . $product->extra_charges . '"
+                        }
+                    }
+                    ],
+                    "takeBackPolicyId": "201"
+                },
+                "listingStartDate": "2025-12-11",
+                "lotSize": "5",
+                "marketplaceId": "EBAY_IN",
+                "merchantLocationKey": "",
+                "pricingSummary": {
+                    "minimumAdvertisedPrice": {
+                    "currency": "INR",
+                    "value": "' . $product->total_price . '"
+                    },
+                    "originallySoldForRetailPriceOn": "ON_EBAY",
+                    "originalRetailPrice": {
+                    "currency": "INR",
+                    "value": "' . $product->total_price . '"
+                    },
+                    "price": {
+                    "currency": "INR",
+                    "value": "' . $product->total_price . '"
+                    },
+                    "pricingVisibility": "PRE_CHECKOUT"
+                },
+                "quantityLimitPerBuyer": "5",
+                "regulatory": {
+                    "manufacturer": {
+                    "addressLine1": "string",
+                    "addressLine2": "string",
+                    "city": "string",
+                    "companyName": "string",
+                    "contactUrl": "string",
+                    "country": "IN",
+                    "email": "string",
+                    "phone": "string",
+                    "postalCode": "string",
+                    "stateOrProvince": "string"
+                    },
+                    "productSafety": {
+                    "component": "string",
+                    "pictograms": [
+                        "string"
+                    ],
+                    "statements": [
+                        "string"
+                    ]
+                    },
+                    "responsiblePersons": [
+                    {
+                        "addressLine1": "string",
+                        "addressLine2": "string",
+                        "city": "string",
+                        "companyName": "string",
+                        "contactUrl": "string",
+                        "country": "IN",
+                        "email": "string",
+                        "phone": "string",
+                        "postalCode": "string",
+                        "stateOrProvince": "string",
+                        "types": [
+                        "EU_RESPONSIBLE_PERSON"
+                        ]
+                    }
+                    ]
+                },
+                "storeCategoryNames": [
+                    "Dolls & Bears"
+                ],
+                "tax": {
+                    "applyTax": "true",
+                    "thirdPartyTaxCategory": "none",
+                    "vatPercentage": "12"
+                }
+                }
+            ]
+            }`;
+            return $offer;
     }
 }
