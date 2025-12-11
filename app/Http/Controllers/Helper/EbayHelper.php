@@ -74,7 +74,7 @@ class EbayHelper extends Controller
         }';
         $res = ApiHelper::api($url, $method, $header, $fields);
         $res = json_decode($res);
-        self::log_status($res);
+        self::log_status($res,'create_inventory');
         return $res;
     }
     public static function pack_product($id)
@@ -113,16 +113,17 @@ class EbayHelper extends Controller
             }';
         return $pack;
     }
-    private function log_status($responses)
+    private static function log_status($responses,$func)
     {
-        foreach($responses as $index => $response)
+        foreach($responses->responses as $index => $response)
         {
             $log = new PUS();
+            $log->func = $func;
             $log->status_code = $response->statusCode;
             $log->sku = $response->sku;
             $log->locale = $response->locale;
-            $log->warnings = $response->warnings;
-            $log->errors = $response->errors;
+            $log->warnings = json_encode($response->warnings);
+            $log->errors = json_encode($response->errors);
             $log->save();
         }
     }
