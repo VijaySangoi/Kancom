@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('product_update_status', function (Blueprint $table) {
             $table->id();
+            $table->string('function');
             $table->integer('status_code');
             $table->string('sku');
             $table->string('locale');
-            $table->string('warnings');
-            $table->string('errors');
+            $table->text('warnings');
+            $table->text('errors');
             $table->timestamps();
         });
     }
