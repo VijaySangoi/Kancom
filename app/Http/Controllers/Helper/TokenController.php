@@ -15,7 +15,6 @@ class TokenController extends Controller
             //insert into db here
             $code = $_GET['code'];
             $expiry = $_GET['expires_in'];
-            var_dump($_GET['code']);
         }
         return view('dashboard')->with('req',$request);
     }
