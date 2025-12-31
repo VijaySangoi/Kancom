@@ -114,6 +114,7 @@ class EbayHelper extends Controller
             ->where('products.id', '=', $id)
             ->first();
         $country = $product->country ?? 'INDIA';
+        $descrip = substr($product->description,0,'3800');
         $pack = '{
             "sku":"' . $product->sku . '",
                 "locale":"en_US",
@@ -124,7 +125,7 @@ class EbayHelper extends Controller
                         "' . $country . '"
                         ]
                     },
-                    "description":"' . $product->description . '",
+                    "description":"' . $descrip . '",
                     "imageUrls":[
                     "' . str_replace(',', '","', $product->imageUrls) . '"
                     ]
