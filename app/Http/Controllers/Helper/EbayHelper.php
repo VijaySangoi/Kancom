@@ -231,4 +231,39 @@ class EbayHelper extends Controller
                 }';
             return $offer;
     }
+    public static function create_fulfillment_policy($token,$policy)
+    {
+        $policy = '{
+            "name": "' . $policy->name . '",
+            "marketplaceId": "' . $policy->marketplace_id . '",
+            "categoryTypes": [
+                {
+                    "name": "' . $policy->category_name . '"
+                }
+            ],
+            "handlingTime": {
+                "unit": "' . $policy->unit . '",
+                "value": "' . $policy->value . '"
+            },
+            "shippingOptions": [
+                {
+                    "costType": "' . $policy->cost_type . '",
+                    "optionType": "' . $policy->option_type . '",
+                    "shippingServices": [
+                        {
+                            "buyerResponsibleForShipping": "' . $policy->buyer_responsible_ship . '",
+                            "freeShipping": "' . $policy->free_ship . '",
+                            "shippingCarrierCode": "' . $policy->carrier_code . '",
+                            "shippingServiceCode": "' . $policy->ship_carrier_code . '"
+                        }
+                    ]
+                }
+            ]
+        }';
+        $url = config('ebay.ebay_url').'/sell/account/v1/fulfillment_policy/';
+        $method = 'POST';
+        $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
+        $res = ApiHelper::api($url,$method,$header,$policy);
+        return $res;
+    }
 }
