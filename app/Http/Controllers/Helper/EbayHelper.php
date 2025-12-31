@@ -8,41 +8,41 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ProductUpdateStatus as PUS;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Models\EbayStore as ES;
 
 class EbayHelper extends Controller
 {
-    public static function getToken($url, $fields)
+    public static function getToken(ES $store, $url, $fields)
     {
-        $gravy = base64_encode(config('ebay.client_id') . ":" . config('ebay.client_secret'));
+        $gravy = base64_encode($store->ebay_client_id . ":" . $store->ebay_client_secret);
         $header = array('Authorization: Basic ' . $gravy, 'Content-Type: application/x-www-form-urlencoded');
         $res = ApiHelper::api($url, 'POST', $header, $fields);
         $res = json_decode($res);
         return $res;
     }
-    public static function getClientCred()
+    public static function getClientCred(ES $store)
     {
         $url = config('ebay.ebay_url').'/identity/v1/oauth2/token';
         $cred_type = 'client_credentials';
         $scopes = urlencode('https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/buy.order.readonly https://api.ebay.com/oauth/api_scope/buy.guest.order https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly https://api.ebay.com/oauth/api_scope/sell.marketplace.insights.readonly https://api.ebay.com/oauth/api_scope/commerce.catalog.readonly https://api.ebay.com/oauth/api_scope/buy.shopping.cart https://api.ebay.com/oauth/api_scope/buy.offer.auction https://api.ebay.com/oauth/api_scope/commerce.identity.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.email.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.phone.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.address.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.name.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.status.readonly https://api.ebay.com/oauth/api_scope/sell.finances https://api.ebay.com/oauth/api_scope/sell.payment.dispute https://api.ebay.com/oauth/api_scope/sell.item.draft https://api.ebay.com/oauth/api_scope/sell.item https://api.ebay.com/oauth/api_scope/sell.reputation https://api.ebay.com/oauth/api_scope/sell.reputation.readonly https://api.ebay.com/oauth/api_scope/commerce.notification.subscription https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly https://api.ebay.com/oauth/api_scope/sell.stores https://api.ebay.com/oauth/api_scope/sell.stores.readonly https://api.ebay.com/oauth/api_scope/commerce.vero');
         $fields = 'grant_type=' . $cred_type . '&scope=' . $scopes;
-        $res = self::getToken($url, $fields);
+        $res = self::getToken($store, $url, $fields);
         return $res;
     }
-    public static function refreshToken($token)
+    public static function refreshToken(ES $store, $token)
     {
         $url = config('ebay.ebay_url').'/identity/v1/oauth2/token';
         $grant_type = 'refresh_token';
-        $scopes = urlencode('https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/buy.order.readonly https://api.ebay.com/oauth/api_scope/buy.guest.order https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly https://api.ebay.com/oauth/api_scope/sell.marketplace.insights.readonly https://api.ebay.com/oauth/api_scope/commerce.catalog.readonly https://api.ebay.com/oauth/api_scope/buy.shopping.cart https://api.ebay.com/oauth/api_scope/buy.offer.auction https://api.ebay.com/oauth/api_scope/commerce.identity.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.email.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.phone.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.address.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.name.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.status.readonly https://api.ebay.com/oauth/api_scope/sell.finances https://api.ebay.com/oauth/api_scope/sell.payment.dispute https://api.ebay.com/oauth/api_scope/sell.item.draft https://api.ebay.com/oauth/api_scope/sell.item https://api.ebay.com/oauth/api_scope/sell.reputation https://api.ebay.com/oauth/api_scope/sell.reputation.readonly https://api.ebay.com/oauth/api_scope/commerce.notification.subscription https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly https://api.ebay.com/oauth/api_scope/sell.stores https://api.ebay.com/oauth/api_scope/sell.stores.readonly https://api.ebay.com/oauth/api_scope/commerce.vero');
-        $fields = 'grant_type=' . $grant_type . '&scope=' . $scopes . '&refresh_token=' . $token;
-        $res = self::getToken($url, $fields);
+        $fields = 'grant_type=' . $grant_type . '&scope=' . config('ebay.ebay_scope') . '&refresh_token=' . $token;
+        $res = self::getToken($store, $url, $fields);
         return $res;
     }
-    public static function getAccessToken($code,$uri)
+    public static function getAccessToken(ES $store, $code)
     {
         $url = config('ebay.ebay_url').'/identity/v1/oauth2/token';
         $grant_type = 'authorization_code';
-        $fields = 'grant_type=' . $grant_type . '&redirect_uri=' . $uri . '&code=' . $code;
-        $res = self::getToken($url, $fields);
+        $fields = 'grant_type=' . $grant_type . '&redirect_uri=' . $store->ebay_redirect_uri . '&code=' . $code;
+        $res = self::getToken($store, $url, $fields);
         return $res;
     }
     public static function getItems($token)
