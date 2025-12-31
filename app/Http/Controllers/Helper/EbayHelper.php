@@ -369,4 +369,12 @@ class EbayHelper extends Controller
         $res = ApiHelper::api($url,$method,$header);
         return $res;
     }
+    public static function get_return_policy($token,$marketplace_id)
+    {
+        $url = config('ebay.ebay_url').'/sell/account/v1/return_policy?marketplace_id='.$marketplace_id;
+        $method = 'GET';
+        $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
+        $res = ApiHelper::api($url,$method,$header);
+        return $res;
+    }
 }
