@@ -73,8 +73,9 @@
                                 <x-forms.input label="Redirect URI" name="RedirectUri" type="text"
                                     value="" />
                             </div>
-                            <div>
+                            <div class="inline-flex">
                                 <x-button type="primary">{{ __('Save') }}</x-button>
+                                <x-a id="url" disabled type="primary" href="">Sync</x-a>
                             </div>
                         </form>
 
@@ -101,12 +102,20 @@
     </div>
     <script>
     $(".setValues").on('click',(e)=>{
-        $("#Name").val(e.currentTarget.getAttribute('data-name'));
-        $("#ClientId").val(e.currentTarget.getAttribute('data-clientId'));
-        $("#DevId").val(e.currentTarget.getAttribute('data-devId'));
-        $("#ClientSecret").val(e.currentTarget.getAttribute('data-clientSecret'));
-        $("#RedirectUri").val(e.currentTarget.getAttribute('data-redirectUri'));
-        $("#Del").val(e.currentTarget.getAttribute('data-id'));
+        let name = e.currentTarget.getAttribute('data-name');
+        let clientid = e.currentTarget.getAttribute('data-clientId');
+        let devid = e.currentTarget.getAttribute('data-devId');
+        let clientsec = e.currentTarget.getAttribute('data-clientSecret');
+        let redirecturi = e.currentTarget.getAttribute('data-redirectUri');
+        let dataid = e.currentTarget.getAttribute('data-id');
+        $("#Name").val(name);
+        $("#ClientId").val(clientid);
+        $("#DevId").val(devid);
+        $("#ClientSecret").val(clientsec);
+        $("#RedirectUri").val(redirecturi);
+        $("#Del").val(dataid);
+        let url="{{config('ebay.ebay_auth')}}/oauth2/authorize?state="+dataid+"&client_id="+clientid+"&response_type=code&redirect_uri="+redirecturi+"&scope={{config('ebay.ebay_scope')}}"
+        $("#url").attr('href',url);
     });
     $(".clearValues").click((e)=>{
         $("#Name").val("");
