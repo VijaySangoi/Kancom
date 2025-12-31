@@ -10,6 +10,7 @@ use App\Http\Controllers\Helper\EbayHelper as EH;
 use App\Models\EbayStore as ES;
 use App\Models\Token as Tk;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AuthCodeController extends Controller
 {
@@ -28,7 +29,11 @@ class AuthCodeController extends Controller
         $rec->save();
         $store_list = ES::select('ebay_redirect_uri')->where('id',$state)->first();
         $id = $rec->id;
-        $res = EH::getAccessToken($code,$store_list->ebay_redirect_uri);
+        if(property_exists($res,'error'))
+        {
+            Log::info(json_encode($res));
+            return view('dashboard');
+        }
         $rec = new Tk();
         $rec->token_type = true;
         $rec->token = $res->access_token;
@@ -48,7 +53,11 @@ class AuthCodeController extends Controller
         ->first();
         if($token->expire < now())
         {
-            $res = EH::refreshToken($token->refresh_token);
+            if(!property_exists($res,'access_token'))
+            {
+                Log::info(json_encode($res));
+                return;
+            }
             DB::table('tokens')
             ->where('id',$token->tid)
             ->update([
