@@ -282,4 +282,48 @@ class EbayHelper extends Controller
         $res = ApiHelper::api($url,$method,$header);
         return $res;
     }
+    public static function create_payment_policy($token,$policy)
+    {
+        $policy = '{
+            "name": "' . $policy->name . '",
+            "description": "' . $policy->description . '",
+            "marketplaceId": "' . $policy->marketplace_id . '",
+            "categoryTypes": [
+                {
+                    "name": "' . $policy->category_name . '"
+                }
+            ],
+            "immediatePay": ' . $policy->immediate_pay . ',
+            "fullPaymentDueIn": {
+                "value": ' . $policy->full_due_value . ',
+                "unit": "' . $policy->full_due_unit . '"
+            },
+            "deposit": {
+                "amount": {
+                    "value": "' . $policy->dep_value . '",
+                    "currency": "' . $policy->dep_currency . '"
+                },
+                "dueIn": {
+                    "value": ' . $policy->due_value . ',
+                    "unit": "' . $policy->due_unit . '"
+                }
+            },
+            "paymentMethods": [
+                {
+                    "paymentMethodType": "CASH_ON_PICKUP"
+                },
+                {
+                    "paymentMethodType": "MONEY_ORDER"
+                },
+                {
+                    "paymentMethodType": "CASHIER_CHECK"
+                }
+            ]
+        }';
+        $url = config('ebay.ebay_url').'/sell/account/v1/payment_policy';
+        $method = 'POST';
+        $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
+        $res = ApiHelper::api($url,$method,$header,$policy);
+        return $res;
+    }
 }
