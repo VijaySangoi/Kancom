@@ -14,6 +14,7 @@ class SupplementaryController extends Controller
         $id = $req->input('store_id');
         $rec = UserStore::where('user_id',Auth::user()->id)->first();
         $rec->store_id = $id;
+        session(['store_id' => $rec->store_id]);
         $rec->save();
         return redirect()->back();
     }
