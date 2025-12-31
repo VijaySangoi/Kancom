@@ -140,15 +140,24 @@ class EbayHelper extends Controller
             }';
         return $pack;
     }
-    private static function log_status($responses,$func)
+    private static function log_status($json,$func)
     {
-        foreach($responses->responses as $index => $response)
+        if(!property_exists($json,'responses'))
+        {
+            Log::error(json_encode($json));
+            return;
+        }
+        foreach($json->responses as $index => $response)
         {
             $log = new PUS();
-            $log->func = $func;
+            $log->function = $func;
             $log->status_code = $response->statusCode;
             $log->sku = $response->sku;
-            $log->locale = $response->locale;
+            $log->locale ='en';
+            if(property_exists($log,'locale'))
+            {
+                $log->locale = $response->locale;
+            }
             $log->warnings = json_encode($response->warnings);
             $log->errors = json_encode($response->errors);
             $log->save();
