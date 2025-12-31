@@ -173,163 +173,62 @@ class EbayHelper extends Controller
             ->leftJoin('conditions', 'conditions.id', '=', 'products.condition')
             ->where('products.id', '=', $id)
             ->first();
-        $offer = `{
-            "sku": "' . $product->sku . '",
-            "secondaryCategoryId": "237",
-            "requests": [
+        $charge = $product->extra_charges ?? '0';
+        $total = $product->total_price ?? '0';
+        $descrip = substr($product->description,0,3800);
+        $offer = '
                 {
-                "availableQuantity": "' . $product->quantity . '",
-                "categoryId": "237",
-                "charity": {
-                    "charityId": "none",
-                    "donationPercentage": "0"
-                },
-                "extendedProducerResponsibility": {
-                    "ecoParticipationFee": {
-                    "currency": "INR",
-                    "value": "0"
-                    },
-                    "producerProductId": "string",
-                    "productDocumentationId": "string",
-                    "productPackageId": "string",
-                    "shipmentPackageId": "string"
-                },
-                "format": "FIXED_PRICE",
-                "hideBuyerDetails": "false",
-                "includeCatalogProductDetails": "true",
-                "listingDescription": "' . $product->description . '",
-                "listingDuration": "DAYS_5",
-                "listingPolicies": {
-                    "bestOfferTerms": {
-                    "autoAcceptPrice": {
-                        "currency": "INR",
-                        "value": "' . $product->wholesale_price . '"
-                    },
-                    "autoDeclinePrice": {
-                        "currency": "INR",
-                        "value": "' . $product->wholesale_price - 1 . '"
-                    },
-                    "bestOfferEnabled": "false"
-                    },
-                    "eBayPlusIfEligible": "false",
-                    "fulfillmentPolicyId": "235",
-                    "paymentPolicyId": "201",
-                    "productCompliancePolicyIds": [
-                    "201"
-                    ],
-                    "regionalProductCompliancePolicies": {
-                    "countryPolicies": [
-                        {
-                        "country": "IN",
-                        "policyIds": [
-                            "201"
-                        ]
-                        }
-                    ]
-                    },
-                    "regionalTakeBackPolicies": {
-                    "countryPolicies": [
-                        {
-                        "country": "IN",
-                        "policyIds": [
-                            "201"
-                        ]
-                        }
-                    ]
-                    },
-                    "returnPolicyId": "201",
-                    "shippingCostOverrides": [
-                    {
-                        "additionalShippingCost": {
-                        "currency": "INR",
-                        "value": "' . $product->extra_charges . '"
+                    "sku": "' . $product->sku . '",
+                    "marketplaceId": "EBAY_IN",
+                    "format": "FIXED_PRICE",
+                    "categoryId": "30120",
+                    "pricingSummary": {
+                        "price": {
+                            "value": "' . $total . '",
+                            "currency": "INR"
                         },
-                        "priority": "2",
-                        "shippingCost": {
-                        "currency": "INR",
-                        "value": "' . $product->extra_charges . '"
+                        "originalRetailPrice": {
+                            "value": "' . $total . '",
+                            "currency": "INR"
                         },
-                        "shippingServiceType": "DOMESTIC",
-                        "surcharge": {
-                        "currency": "INR",
-                        "value": "' . $product->extra_charges . '"
-                        }
-                    }
+                        "minimumAdvertisedPrice": {
+                            "value": "' . $total . '",
+                            "currency": "INR"
+                        },
+                        "pricingVisibility": "PRE_CHECKOUT",
+                        "originallySoldForRetailPriceOn": "ON_EBAY"
+                    },
+                    "storeCategoryNames": [
+                        "shirts",
+                        "accessories"
                     ],
-                    "takeBackPolicyId": "201"
-                },
-                "listingStartDate": "2025-12-11",
-                "lotSize": "5",
-                "marketplaceId": "EBAY_IN",
-                "merchantLocationKey": "",
-                "pricingSummary": {
-                    "minimumAdvertisedPrice": {
-                    "currency": "INR",
-                    "value": "' . $product->total_price . '"
-                    },
-                    "originallySoldForRetailPriceOn": "ON_EBAY",
-                    "originalRetailPrice": {
-                    "currency": "INR",
-                    "value": "' . $product->total_price . '"
-                    },
-                    "price": {
-                    "currency": "INR",
-                    "value": "' . $product->total_price . '"
-                    },
-                    "pricingVisibility": "PRE_CHECKOUT"
-                },
-                "quantityLimitPerBuyer": "5",
-                "regulatory": {
-                    "manufacturer": {
-                    "addressLine1": "string",
-                    "addressLine2": "string",
-                    "city": "string",
-                    "companyName": "string",
-                    "contactUrl": "string",
-                    "country": "IN",
-                    "email": "string",
-                    "phone": "string",
-                    "postalCode": "string",
-                    "stateOrProvince": "string"
-                    },
-                    "productSafety": {
-                    "component": "string",
-                    "pictograms": [
-                        "string"
-                    ],
-                    "statements": [
-                        "string"
-                    ]
-                    },
-                    "responsiblePersons": [
-                    {
-                        "addressLine1": "string",
-                        "addressLine2": "string",
-                        "city": "string",
-                        "companyName": "string",
-                        "contactUrl": "string",
-                        "country": "IN",
-                        "email": "string",
-                        "phone": "string",
-                        "postalCode": "string",
-                        "stateOrProvince": "string",
-                        "types": [
-                        "EU_RESPONSIBLE_PERSON"
+                    "listingPolicies": {
+                        "fulfillmentPolicyId": "231",
+                        "returnPolicyId": "231",
+                        "paymentPolicyId": "231",
+                        "shippingCostOverrides": [
+                            {
+                                "shippingCost": {
+                                    "value": "' . $charge . '",
+                                    "currency": "INR"
+                                },
+                                "additionalShippingCost": {
+                                    "value": "' . $charge . '",
+                                    "currency": "INR"
+                                },
+                                "priority": 2,
+                                "shippingServiceType": "DOMESTIC"
+                            }
                         ]
-                    }
-                    ]
-                },
-                "storeCategoryNames": [
-                    "Dolls & Bears"
-                ],
-                "tax": {
-                    "applyTax": "true",
-                    "thirdPartyTaxCategory": "none",
-                    "vatPercentage": "12"
-                }
-                }
-            ]
-            }`;
+                    },
+                    "tax": {
+                        "applyTax": true
+                    },
+                    "listingDescription": "' . $descrip . '",
+                    "quantityLimitPerBuyer": 5,
+                    "merchantLocationKey": "MA531",
+                    "includeCatalogProductDetails": false
+                }';
             return $offer;
     }
 }
