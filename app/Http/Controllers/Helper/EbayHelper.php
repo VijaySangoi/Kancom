@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Models\ProductUpdateStatus as PUS;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EbayHelper extends Controller
 {
@@ -95,6 +96,8 @@ class EbayHelper extends Controller
          $fields .= '
             ]
         }';
+        Log::info(json_encode($header));
+        Log::info(json_encode($fields));
         $res = ApiHelper::api($url, $method, $header, $fields);
         $res = json_decode($res);
         self::log_status($res,'create_offer');
