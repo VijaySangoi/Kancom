@@ -377,4 +377,18 @@ class EbayHelper extends Controller
         $res = ApiHelper::api($url,$method,$header);
         return $res;
     }
+    public static function create_custom_policy($token,$policy)
+    {
+        $policy = '{
+            "description": " ' .$policy->description. ' ",
+            "label": " ' .$policy->label. ' ",
+            "name": " ' .$policy->name. ' ",
+            "policyType": " ' .$policy->policy_type. ' "
+        }';
+        $url = config('ebay.ebay_url').'/sell/account/v1/custom_policy';
+        $method = 'POST';
+        $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
+        $res = ApiHelper::api($url,$method,$header,$policy);
+        return $res;
+    }
 }
