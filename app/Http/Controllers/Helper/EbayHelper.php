@@ -326,4 +326,12 @@ class EbayHelper extends Controller
         $res = ApiHelper::api($url,$method,$header,$policy);
         return $res;
     }
+    public static function delete_payment_policy($token,$id)
+    {
+        $url = config('ebay.ebay_url').'/sell/account/v1/payment_policy/'.$id;
+        $method = 'DELETE';
+        $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
+        $res = ApiHelper::api($url,$method,$header);
+        return $res;
+    }
 }
