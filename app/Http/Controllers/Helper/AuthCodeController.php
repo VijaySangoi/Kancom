@@ -44,30 +44,32 @@ class AuthCodeController extends Controller
         $rec->save();
         return view('dashboard');
     }
-    public static function code_valid(string $name)
+    public static function code_valid($id)
     {
-        $token = DB::table('ebay_stores')
-        ->select('*','ebay_stores.id as esid','auth_codes.id as aucid','tokens.id as tid')
-        ->leftJoin('auth_codes','auth_codes.ebay_store_id','ebay_stores.id')
+        $store = ES::where('id',$id)->first();
+        $token = DB::table('auth_codes')
         ->leftJoin('tokens','tokens.code_id','auth_codes.id')
-        ->where('ebay_stores.store_name',$name)
-        ->first();
+        ->where('auth_codes.ebay_store_id','=',$id);
+        $token = $token->first();
         if($token->expire < now())
         {
+            $res = EH::refreshToken($store,$token->refresh_token);
             if(!property_exists($res,'access_token'))
             {
                 Log::info(json_encode($res));
                 return;
             }
             DB::table('tokens')
-            ->where('id',$token->tid)
+            ->where('id',$token->id)
             ->update([
                 'token' => $res->access_token,
                 'expire' => now()->addSeconds($res->expires_in)
             ]);
+            $token = DB::table('auth_codes')
+            ->leftJoin('tokens','tokens.code_id','auth_codes.id')
+            ->where('auth_codes.ebay_store_id','=',$id)
+            ->first();
         }
-        $token = DB::table('tokens')
-        ->first();
         return $token->token;
     }
 }
