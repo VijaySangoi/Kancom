@@ -11,14 +11,14 @@ class ProductUpload implements ShouldQueue
 {
     use Queueable;
     private array $ids;
-    private string $store; //keep array len below 24
+    private $store_id;
     /**
      * Create a new job instance.
      */
-    public function __construct($ids,$store)
+    public function __construct($ids,$store_id)
     {
         $this->ids = $ids;
-        $this->store = $store;
+        $this->store_id = $store_id;
     }
 
     /**
@@ -26,7 +26,7 @@ class ProductUpload implements ShouldQueue
      */
     public function handle(): void
     {
-        $token = AC::code_valid($this->store);
+        $token = AC::code_valid($this->store_id);
         EH::bulkCreateOrReplaceInventory($token,$this->ids);
         EH::bulk_create_offer($token,$this->ids);
     }
