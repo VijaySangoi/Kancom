@@ -342,4 +342,23 @@ class EbayHelper extends Controller
         $res = ApiHelper::api($url,$method,$header);
         return $res;
     }
+    public static function create_return_policy($token,$policy)
+    {
+        $policy = '{
+            "name": "' . $policy->name . '",
+            "marketplaceId": "' . $policy->marketplace_id . '",
+            "refundMethod": "' . $policy->refund_method . '",
+            "returnsAccepted": ' . $policy->ret_acc . ',
+            "returnShippingCostPayer": "' . $policy->ret_ship_pay . '",
+            "returnPeriod": {
+                "value": ' . $policy->value . ',
+                "unit": "' . $policy->unit . '"
+            }
+        }';
+        $url = config('ebay.ebay_url').'/sell/account/v1/return_policy';
+        $method = 'POST';
+        $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
+        $res = ApiHelper::api($url,$method,$header,$policy);
+        return $res;
+    }
 }
