@@ -20,7 +20,7 @@ class EbayHelper extends Controller
     }
     public static function getClientCred()
     {
-        $url = 'https://api.sandbox.ebay.com/identity/v1/oauth2/token';
+        $url = config('ebay.ebay_url').'/identity/v1/oauth2/token';
         $cred_type = 'client_credentials';
         $scopes = urlencode('https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/buy.order.readonly https://api.ebay.com/oauth/api_scope/buy.guest.order https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly https://api.ebay.com/oauth/api_scope/sell.marketplace.insights.readonly https://api.ebay.com/oauth/api_scope/commerce.catalog.readonly https://api.ebay.com/oauth/api_scope/buy.shopping.cart https://api.ebay.com/oauth/api_scope/buy.offer.auction https://api.ebay.com/oauth/api_scope/commerce.identity.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.email.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.phone.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.address.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.name.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.status.readonly https://api.ebay.com/oauth/api_scope/sell.finances https://api.ebay.com/oauth/api_scope/sell.payment.dispute https://api.ebay.com/oauth/api_scope/sell.item.draft https://api.ebay.com/oauth/api_scope/sell.item https://api.ebay.com/oauth/api_scope/sell.reputation https://api.ebay.com/oauth/api_scope/sell.reputation.readonly https://api.ebay.com/oauth/api_scope/commerce.notification.subscription https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly https://api.ebay.com/oauth/api_scope/sell.stores https://api.ebay.com/oauth/api_scope/sell.stores.readonly https://api.ebay.com/oauth/api_scope/commerce.vero');
         $fields = 'grant_type=' . $cred_type . '&scope=' . $scopes;
@@ -29,7 +29,7 @@ class EbayHelper extends Controller
     }
     public static function refreshToken($token)
     {
-        $url = 'https://api.sandbox.ebay.com/identity/v1/oauth2/token';
+        $url = config('ebay.ebay_url').'/identity/v1/oauth2/token';
         $grant_type = 'refresh_token';
         $scopes = urlencode('https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/buy.order.readonly https://api.ebay.com/oauth/api_scope/buy.guest.order https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly https://api.ebay.com/oauth/api_scope/sell.marketplace.insights.readonly https://api.ebay.com/oauth/api_scope/commerce.catalog.readonly https://api.ebay.com/oauth/api_scope/buy.shopping.cart https://api.ebay.com/oauth/api_scope/buy.offer.auction https://api.ebay.com/oauth/api_scope/commerce.identity.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.email.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.phone.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.address.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.name.readonly https://api.ebay.com/oauth/api_scope/commerce.identity.status.readonly https://api.ebay.com/oauth/api_scope/sell.finances https://api.ebay.com/oauth/api_scope/sell.payment.dispute https://api.ebay.com/oauth/api_scope/sell.item.draft https://api.ebay.com/oauth/api_scope/sell.item https://api.ebay.com/oauth/api_scope/sell.reputation https://api.ebay.com/oauth/api_scope/sell.reputation.readonly https://api.ebay.com/oauth/api_scope/commerce.notification.subscription https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly https://api.ebay.com/oauth/api_scope/sell.stores https://api.ebay.com/oauth/api_scope/sell.stores.readonly https://api.ebay.com/oauth/api_scope/commerce.vero');
         $fields = 'grant_type=' . $grant_type . '&scope=' . $scopes . '&refresh_token=' . $token;
@@ -38,7 +38,7 @@ class EbayHelper extends Controller
     }
     public static function getAccessToken($code,$uri)
     {
-        $url = 'https://api.sandbox.ebay.com/identity/v1/oauth2/token';
+        $url = config('ebay.ebay_url').'/identity/v1/oauth2/token';
         $grant_type = 'authorization_code';
         $fields = 'grant_type=' . $grant_type . '&redirect_uri=' . $uri . '&code=' . $code;
         $res = self::getToken($url, $fields);
@@ -46,7 +46,7 @@ class EbayHelper extends Controller
     }
     public static function getItems($token)
     {
-        $url = 'https://api.sandbox.ebay.com/sell/inventory/v1/inventory_item';
+        $url = config('ebay.ebay_url').'/sell/inventory/v1/inventory_item';
         $method = 'GET';
         $header = array('Authorization:Bearer ' . $token, 'Accept:application/json');
         $fields = '?limit=20&offset=0';
@@ -56,7 +56,7 @@ class EbayHelper extends Controller
     }
     public static function bulkCreateOrReplaceInventory($token, array $product_id)
     {
-        $url = 'https://api.sandbox.ebay.com/sell/inventory/v1/bulk_create_or_replace_inventory_item';
+        $url = config('ebay.ebay_url').'/sell/inventory/v1/bulk_create_or_replace_inventory_item';
         $method = 'POST';
         $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
         
@@ -79,7 +79,7 @@ class EbayHelper extends Controller
     }
     public static function bulk_create_offer($token, array $product_id)
     {
-        $url = 'https://api.sandbox.ebay.com/sell/inventory/v1/bulk_create_offer';
+        $url = config('ebay.ebay_url').'/sell/inventory/v1/bulk_create_offer';
         $method = 'POST';
         $header = array('Authorization:Bearer ' . $token, 'Accept:application/json', 'Content-Type:application/json');
         
