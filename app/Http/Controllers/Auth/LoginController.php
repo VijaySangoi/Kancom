@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserStore;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,6 +40,13 @@ class LoginController extends Controller
         RateLimiter::clear($this->throttleKey($request));
 
         $request->session()->regenerate();
+
+        $id = Auth::id();
+        $rec = UserStore::where('user_id',$id)->first();
+        if($rec)
+        {
+            session(['store_id' => $rec->store_id]);
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
