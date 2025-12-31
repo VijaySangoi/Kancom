@@ -27,8 +27,9 @@ class AuthCodeController extends Controller
         $rec->code = $code;
         $rec->expires_in = $expire;
         $rec->save();
-        $store_list = ES::select('ebay_redirect_uri')->where('id',$state)->first();
+        $store = ES::where('id',$state)->first();
         $id = $rec->id;
+        $res = EH::getAccessToken($store,$code);
         if(property_exists($res,'error'))
         {
             Log::info(json_encode($res));
